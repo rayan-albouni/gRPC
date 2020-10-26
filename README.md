@@ -16,20 +16,20 @@
 
 gRPC is a Remote Procedure Call system initially developed at Google, and is now an open-source Cloud Native Computing Foundation [incubating project](https://www.cncf.io/blog/2017/03/01/cloud-native-computing-foundation-host-grpc-google/). It represents a method of web communication between services, allowing a server to respond to requests and return requested information to a caller.
 
-On the surface, gRPC may appear similar to a traditional HTTP API, but different they differ underneath:
-- gRPC communication is via a binary string (as opposed to JSON or XML you may expect via API) - this is more efficient
-- gRPC replies on a known configuration / contract between the client and the server, known as an Interface Definition Language (IDL) - protocol buffer (protobuf) `.proto` files for this
+In passing gRPC may appear similar to a traditional HTTP API, but below the surface they are quite different:
+- gRPC communication is via a binary string, as opposed to JSON or XML you may expect via API - this is more efficient
+- gRPC replies on a known configuration / contract between the client and the server, known as an Interface Definition Language (IDL) - protocol buffer (protobuf) `.proto` files are used for this
 
 ## Example project
 The provided example `Grpc` solution contains two projects
-- `Grpc.Server` - sits and listens for calls. This is a gRPC Visual Studio project.
+- `Grpc.Server` - a gRPC Visual Studio project which sits and listens to calls
 - `Grpc.Client` - sends calls to server. This is a console app with the following nuget packages:
     - `Google.Protobuf`
     - `Grpc.Net.Client`
     - `Grpc.Tools`
 
 ## Protobuf files
-Both the client and server make use of `.proto` files to define the the protocol buffer, which is the contract between the server and the client. Both the client and server need to be using the exact same version of the `.proto` file, so they need to be kept in sync. The `.proto` file is made up of two main parts.
+Both the client and server make use of `.proto` files to define the the protocol buffer, which is the contract between the server and the client. The client and server need to be using the exact same version of the `.proto` file, so they need to be kept in sync. The `.proto` file is made up of two main parts.
 - `service` items
     - Roughly equivalent to a method
     - Defines what you expect to send to the method and what you expect to receive back
@@ -38,14 +38,14 @@ Both the client and server make use of `.proto` files to define the the protocol
     - Roughly equivalent to a model / view model / DTO
 	- Can be nested to create complex models
     - Contains 0 or more properties and the order of those properties
-		- Supported message property types include bool, int32, float, double, string, enums and more - see the full list [here](https://docs.microsoft.com/en-us/aspnet/core/grpc/protobuf?view=aspnetcore-3.1).
+		- Supported property types include bool, int32, float, double, string, enums and more - see the full list [here](https://docs.microsoft.com/en-us/aspnet/core/grpc/protobuf?view=aspnetcore-3.1)
 
 A list of items can be represented in different ways:
-- `repeated` - represents a read-only list of items that are returned at the same time
+- `repeated` - represents a read-only list of items that are returned to the client all at once
 - `stream` - returns a stream of items to the client as soon as they become available, allowing the client to begin processing initial items before receiving the full list. Learn more about gRPC streaming [here](https://grpc.io/docs/what-is-grpc/core-concepts/#rpc-life-cycle)
 
 ### Example
-The following `.proto` file is a snippet of the `users.proto` file, used to represent a _UsersService_ in the example project.
+The following `.proto` file is a snippet of the `users.proto` file, used to represent the _UsersService_ in the example project.
 
 ```cs
 syntax = "proto3";
@@ -92,10 +92,11 @@ It may help to imagine the service and messages as the following methods and vie
 
 ## Developing gRPC services with .NET Core
 Underlying base classes for the services, methods and models defined in the `.proto` file are automatically generated for you. To ensure this happens, make sure the following properties are set on the `.proto` files in Visual Studio:
-- Build Action as "Protobuf compiler"
-- gRPC Stub Classes as "Server only" or "Client only" (depending on project)
-- Class Access as "Public"
-- Compile Protobuf as "Yes"
+- Build Action is "Protobuf compiler"
+- gRPC Stub Classes is "Server only" or "Client only" (depending on project)
+- Class Access is "Public"
+- Compile Protobuf is "Yes"
+
 Note - you may need to rebuild the solution after changing the `.proto` file to force the generation of underlying classes.
 
 You can make use of the auto-generated files as follows:
@@ -144,9 +145,9 @@ gRPC servers require special hosting. For those in the Microsoft Azure ecosystem
 gRPC also requires the server and client(s) to have access to the same `.proto` file, and it has to be kept in sync. It is possible to reference `.proto` files via URLs, but you still need to be careful that any updates are [non-breaking](https://docs.microsoft.com/en-us/aspnet/core/grpc/versioning?view=aspnetcore-3.1). See [this article](https://docs.microsoft.com/en-us/aspnet/core/grpc/dotnet-grpc?view=aspnetcore-3.1) for more information.
 
 ## Further reading
-- [gRPC for .NET Examples](https://github.com/grpc/grpc-dotnet/tree/master/examples) - GitHub examples for gRPC scenarios
-- [gRPC UI](https://github.com/fullstorydev/grpcui) - UI for testing gRPC servers (similar to Postman)
-- [Intro to gRPC in C# - How To Get Started](https://www.youtube.com/watch?v=QyxCX2GYHxk) - Tim Corey
 - [Introduction to gRPC on .NET Core](https://docs.microsoft.com/en-us/aspnet/core/grpc/?view=aspnetcore-3.1) - Microsoft Docs
+- [Intro to gRPC in C# - How To Get Started](https://www.youtube.com/watch?v=QyxCX2GYHxk) - Tim Corey
 - [Create Protobuf messages for .NET apps](https://docs.microsoft.com/en-us/aspnet/core/grpc/protobuf?view=aspnetcore-3.1) - Microsoft Docs
 - [Implementing Microservices with gRPC and .NET Core 3.1](https://auth0.com/blog/implementing-microservices-grpc-dotnet-core-3/) - Auth0 Blog
+- [gRPC for .NET Examples](https://github.com/grpc/grpc-dotnet/tree/master/examples) - GitHub examples for gRPC scenarios
+- [gRPC UI](https://github.com/fullstorydev/grpcui) - UI for testing gRPC servers (similar to Postman)
