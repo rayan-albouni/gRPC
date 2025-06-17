@@ -4,17 +4,16 @@ using Grpc.Server;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Grpc.Client;
 
 namespace Grpc.Client
 {
     class Program
     {
-        private const string _grpcServerAddress = "https://localhost:5001";
-
         static async Task Main(string[] args)
         {
-            using var grpcChannel = GrpcChannel.ForAddress(_grpcServerAddress);
-            var userServiceClient = new User.UserClient(grpcChannel);
+            var channel = GrpcClientHelper.CreateChannel("https://localhost:5001");
+            var userServiceClient = new User.UserClient(channel);
 
             GetUsersInGroupList(userServiceClient);
             Console.WriteLine("");
@@ -97,10 +96,14 @@ namespace Grpc.Client
 
         private static async Task<string> GetJwt()
         {
-            var httpClient = new HttpClient();
+             var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+            var httpClient = new HttpClient(httpHandler);
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_grpcServerAddress}/jwt"),
+                RequestUri = new Uri($"https://localhost:5001/jwt"),
                 Method = HttpMethod.Get,
                 Version = new Version(2, 0)
             };
